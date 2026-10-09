@@ -58,18 +58,27 @@ function App() {
 
         <br /><br />
 
-        <select
-          name="organization_type"
-          value={formData.organization_type}
-          onChange={handleChange}
-        >
-          <option value="nonprofit">Nonprofit</option>
-          <option value="community">Community Organization</option>
-          <option value="student">Student Organization</option>
-          <option value="education">Education Program</option>
-          <option value="youth">Youth Program</option>
-          <option value="other">Other</option>
-        </select>
+        <label htmlFor="organization_type">
+  Organization Type
+</label>
+
+<br />
+
+<select
+  id="organization_type"
+  name="organization_type"
+  value={formData.organization_type}
+  onChange={handleChange}
+  required
+>
+  <option value="">Select organization type</option>
+  <option value="nonprofit">Nonprofit</option>
+  <option value="community">Community Organization</option>
+  <option value="student">Student Organization</option>
+  <option value="education">Education Program</option>
+  <option value="youth">Youth Program</option>
+  <option value="other">Other</option>
+</select>
 
         <br /><br />
 
