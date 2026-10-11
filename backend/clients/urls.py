@@ -1,7 +1,15 @@
 from django.urls import path
-from .views import ClientProfileListCreateView, ClientProfileDetailView
+from .views import (
+    ClientProfileListCreateView,
+    ClientProfileDetailView,
+    GrantDraftListCreateView,
+    GrantDraftDetailView,
+)
 
 urlpatterns = [
-    path('clients/', ClientProfileListCreateView.as_view(), name='client-list-create'),
-    path('clients/<int:pk>/', ClientProfileDetailView.as_view(), name='client-detail'),
+    path('clients/', ClientProfileListCreateView.as_view()),
+    path('clients/<int:pk>/', ClientProfileDetailView.as_view()),
+
+    path('grants/', GrantDraftListCreateView.as_view()),
+    path('grants/<int:pk>/', GrantDraftDetailView.as_view()),
 ]
