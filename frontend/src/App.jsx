@@ -1,4 +1,5 @@
 import { useState } from "react";
+import GrantTemplate from "./GrantTemplate";
 
 function App() {
   const [formData, setFormData] = useState({
@@ -11,6 +12,7 @@ function App() {
   });
 
   const [message, setMessage] = useState("");
+  const [clientCreated, setClientCreated] = useState(false);
 
   const handleChange = (e) => {
     setFormData({
@@ -33,6 +35,7 @@ function App() {
 
       if (response.ok) {
         setMessage("Client profile created successfully!");
+        setClientCreated(true);
       } else {
         setMessage("Something went wrong.");
       }
@@ -128,6 +131,9 @@ function App() {
       </form>
 
       <p>{message}</p>
+      {clientCreated && (
+  <GrantTemplate organizationType={formData.organization_type} />
+)}
     </div>
   );
 }
