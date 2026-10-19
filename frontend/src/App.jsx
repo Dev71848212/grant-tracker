@@ -131,9 +131,10 @@ function App() {
       </form>
 
       <p>{message}</p>
-      {clientCreated && (
-  <GrantTemplate organizationType={formData.organization_type} />
-)}
+      <GrantTemplate
+  organizationType={formData.organization_type}
+  clientId={1}
+/>
     </div>
   );
 }

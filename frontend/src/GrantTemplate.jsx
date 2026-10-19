@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 
 const organizationGuidance = {
@@ -25,16 +24,22 @@ const organizationNames = {
   other: "Other",
 };
 
-function GrantTemplate({ organizationType = "nonprofit" }) {
+function GrantTemplate({
+  organizationType = "nonprofit",
+  clientId = 1,
+}) {
   const [step, setStep] = useState(1);
   const [error, setError] = useState("");
   const [completed, setCompleted] = useState(false);
 
   const [grantData, setGrantData] = useState({
     grant_title: "",
-    project_description: "",
-    project_goals: "",
-    funding_requested: "",
+    problem_statement: "",
+    goals: "",
+    target_population: "",
+    planned_activities: "",
+    budget_summary: "",
+    evaluation_plan: "",
   });
 
   const handleChange = (e) => {
@@ -55,24 +60,30 @@ function GrantTemplate({ organizationType = "nonprofit" }) {
     }
 
     if (step === 2) {
-      if (!grantData.project_description.trim()) {
-        return "Please enter a project description.";
+      if (!grantData.problem_statement.trim()) {
+        return "Please enter a problem statement.";
       }
 
-      if (!grantData.project_goals.trim()) {
-        return "Please enter your project goals.";
+      if (!grantData.goals.trim()) {
+        return "Please enter the project goals.";
+      }
+
+      if (!grantData.target_population.trim()) {
+        return "Please enter the target population.";
       }
     }
 
     if (step === 3) {
-      const amount = Number(grantData.funding_requested);
+      if (!grantData.planned_activities.trim()) {
+        return "Please enter the planned activities.";
+      }
 
-      if (
-        grantData.funding_requested.trim() === "" ||
-        !Number.isFinite(amount) ||
-        amount <= 0
-      ) {
-        return "Please enter a funding amount greater than zero.";
+      if (!grantData.budget_summary.trim()) {
+        return "Please enter a budget summary.";
+      }
+
+      if (!grantData.evaluation_plan.trim()) {
+        return "Please enter an evaluation plan.";
       }
     }
 
@@ -97,20 +108,51 @@ function GrantTemplate({ organizationType = "nonprofit" }) {
     setStep((previous) => Math.max(previous - 1, 1));
   };
 
-  const handleComplete = () => {
-    setCompleted(true);
+  const handleComplete = async () => {
     setError("");
+
+    try {
+      const response = await fetch(
+        "http://127.0.0.1:8000/api/grants/",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            ...grantData,
+            client: clientId,
+          }),
+        }
+      );
+
+      if (!response.ok) {
+        const data = await response.json();
+        console.error(data);
+        setError("Could not save the grant draft.");
+        return;
+      }
+
+      setCompleted(true);
+    } catch (err) {
+      console.error(err);
+      setError("Could not connect to the backend.");
+    }
   };
 
   const handleStartOver = () => {
     setStep(1);
     setError("");
     setCompleted(false);
+
     setGrantData({
       grant_title: "",
-      project_description: "",
-      project_goals: "",
-      funding_requested: "",
+      problem_statement: "",
+      goals: "",
+      target_population: "",
+      planned_activities: "",
+      budget_summary: "",
+      evaluation_plan: "",
     });
   };
 
@@ -178,23 +220,18 @@ function GrantTemplate({ organizationType = "nonprofit" }) {
 
       {step === 2 && (
         <div>
-          <h3>Step 2: Project Details</h3>
+          <h3>Step 2: Project Need and Goals</h3>
 
-          <p>
-            Describe your proposed project and explain what
-            you hope to accomplish.
-          </p>
-
-          <label htmlFor="project_description">
-            Project Description
+          <label htmlFor="problem_statement">
+            Problem Statement
           </label>
           <br />
 
           <textarea
-            id="project_description"
-            name="project_description"
-            placeholder="Describe your project..."
-            value={grantData.project_description}
+            id="problem_statement"
+            name="problem_statement"
+            placeholder="What problem or need will this project address?"
+            value={grantData.problem_statement}
             onChange={handleChange}
             rows="5"
             style={fieldStyle}
@@ -202,16 +239,33 @@ function GrantTemplate({ organizationType = "nonprofit" }) {
 
           <br />
 
-          <label htmlFor="project_goals">Project Goals</label>
+          <label htmlFor="goals">Project Goals</label>
           <br />
 
           <textarea
-            id="project_goals"
-            name="project_goals"
-            placeholder="What are your project goals?"
-            value={grantData.project_goals}
+            id="goals"
+            name="goals"
+            placeholder="What are the main goals of the project?"
+            value={grantData.goals}
             onChange={handleChange}
             rows="5"
+            style={fieldStyle}
+          />
+
+          <br />
+
+          <label htmlFor="target_population">
+            Target Population
+          </label>
+          <br />
+
+          <textarea
+            id="target_population"
+            name="target_population"
+            placeholder="Who will benefit from this project?"
+            value={grantData.target_population}
+            onChange={handleChange}
+            rows="4"
             style={fieldStyle}
           />
         </div>
@@ -219,27 +273,54 @@ function GrantTemplate({ organizationType = "nonprofit" }) {
 
       {step === 3 && (
         <div>
-          <h3>Step 3: Funding Request</h3>
+          <h3>Step 3: Project Plan</h3>
 
-          <p>
-            Enter the amount of funding your organization
-            needs to complete this project.
-          </p>
-
-          <label htmlFor="funding_requested">
-            Funding Requested ($)
+          <label htmlFor="planned_activities">
+            Planned Activities
           </label>
           <br />
 
-          <input
-            id="funding_requested"
-            type="number"
-            min="0.01"
-            step="0.01"
-            name="funding_requested"
-            placeholder="Example: 10000"
-            value={grantData.funding_requested}
+          <textarea
+            id="planned_activities"
+            name="planned_activities"
+            placeholder="Describe the main activities of the project."
+            value={grantData.planned_activities}
             onChange={handleChange}
+            rows="5"
+            style={fieldStyle}
+          />
+
+          <br />
+
+          <label htmlFor="budget_summary">
+            Budget Summary
+          </label>
+          <br />
+
+          <textarea
+            id="budget_summary"
+            name="budget_summary"
+            placeholder="Summarize how grant funds will be used."
+            value={grantData.budget_summary}
+            onChange={handleChange}
+            rows="4"
+            style={fieldStyle}
+          />
+
+          <br />
+
+          <label htmlFor="evaluation_plan">
+            Evaluation Plan
+          </label>
+          <br />
+
+          <textarea
+            id="evaluation_plan"
+            name="evaluation_plan"
+            placeholder="How will you measure whether the project was successful?"
+            value={grantData.evaluation_plan}
+            onChange={handleChange}
+            rows="4"
             style={fieldStyle}
           />
         </div>
@@ -248,8 +329,6 @@ function GrantTemplate({ organizationType = "nonprofit" }) {
       {step === 4 && (
         <div>
           <h3>Step 4: Review Your Application</h3>
-
-          <p>Review your information before completing the template.</p>
 
           <p>
             <strong>Organization Type:</strong>
@@ -264,33 +343,44 @@ function GrantTemplate({ organizationType = "nonprofit" }) {
           </p>
 
           <p>
-            <strong>Project Description:</strong>
+            <strong>Problem Statement:</strong>
             <br />
-            {grantData.project_description}
+            {grantData.problem_statement}
           </p>
 
           <p>
-            <strong>Project Goals:</strong>
+            <strong>Goals:</strong>
             <br />
-            {grantData.project_goals}
+            {grantData.goals}
           </p>
 
           <p>
-            <strong>Funding Requested:</strong>
+            <strong>Target Population:</strong>
             <br />
-            ${Number(grantData.funding_requested).toLocaleString(
-              "en-US",
-              {
-                minimumFractionDigits: 2,
-                maximumFractionDigits: 2,
-              }
-            )}
+            {grantData.target_population}
+          </p>
+
+          <p>
+            <strong>Planned Activities:</strong>
+            <br />
+            {grantData.planned_activities}
+          </p>
+
+          <p>
+            <strong>Budget Summary:</strong>
+            <br />
+            {grantData.budget_summary}
+          </p>
+
+          <p>
+            <strong>Evaluation Plan:</strong>
+            <br />
+            {grantData.evaluation_plan}
           </p>
 
           {completed && (
             <p role="status" style={{ color: "lightgreen" }}>
-              Grant template completed successfully!
-              Your answers have not been saved to the database.
+              Grant draft saved successfully!
             </p>
           )}
         </div>
@@ -329,7 +419,7 @@ function GrantTemplate({ organizationType = "nonprofit" }) {
             onClick={handleComplete}
             style={buttonStyle}
           >
-            Complete Template
+            Save Grant Draft
           </button>
         )}
 

@@ -25,3 +25,24 @@ class ClientProfile(models.Model):
 
     def __str__(self):
         return self.organization_name
+
+class GrantDraft(models.Model):
+    client = models.ForeignKey(
+        ClientProfile,
+        on_delete=models.CASCADE,
+        related_name="grant_drafts"
+    )
+
+    grant_title = models.CharField(max_length=200)
+    problem_statement = models.TextField()
+    goals = models.TextField()
+    target_population = models.TextField()
+    planned_activities = models.TextField()
+    budget_summary = models.TextField()
+    evaluation_plan = models.TextField()
+
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return self.grant_title
