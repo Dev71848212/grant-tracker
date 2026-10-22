@@ -1,10 +1,11 @@
 import { useState } from "react";
 import GrantTemplate from "./GrantTemplate";
+import "./App.css";
 
 function App() {
   const [formData, setFormData] = useState({
     organization_name: "",
-    organization_type: "nonprofit",
+    organization_type: "",
     mission: "",
     target_population: "",
     contact_name: "",
@@ -12,13 +13,18 @@ function App() {
   });
 
   const [message, setMessage] = useState("");
-  const [clientCreated, setClientCreated] = useState(false);
+
+  const [clientId, setClientId] = useState(() => {
+    return Number(localStorage.getItem("clientId")) || null;
+  });
 
   const handleChange = (e) => {
     setFormData({
       ...formData,
       [e.target.name]: e.target.value,
     });
+
+    setMessage("");
   };
 
   const handleSubmit = async (e) => {
@@ -33,108 +39,199 @@ function App() {
         body: JSON.stringify(formData),
       });
 
-      if (response.ok) {
-        setMessage("Client profile created successfully!");
-        setClientCreated(true);
-      } else {
+      if (!response.ok) {
         setMessage("Something went wrong.");
+        return;
       }
+
+      const data = await response.json();
+
+      setClientId(data.id);
+
+      localStorage.setItem("clientId", data.id);
+
+      setMessage("Client profile created successfully!");
     } catch (error) {
+      console.error(error);
       setMessage("Could not connect to the backend.");
     }
   };
 
   return (
-    <div style={{ maxWidth: "700px", margin: "40px auto", padding: "20px" }}>
-      <h1>Grant Tracker</h1>
-      <h2>Create Client Profile</h2>
+    <div className="app-shell">
+      <header className="topbar">
+        <div className="brand">
+          <div className="logo-box">G</div>
 
-      <form onSubmit={handleSubmit}>
-        <input
-          type="text"
-          name="organization_name"
-          placeholder="Organization Name"
-          value={formData.organization_name}
-          onChange={handleChange}
-          required
-        />
+          <div className="brand-text">
+            <h1>Grant Tracker</h1>
+            <span>Funding Management Platform</span>
+          </div>
+        </div>
 
-        <br /><br />
+        <div className="status-pill">Sprint Development</div>
+      </header>
 
-        <label htmlFor="organization_type">
-  Organization Type
-</label>
+      <main className="page-container">
+        <section className="hero">
+          <span className="hero-label">Nonprofit Funding Platform</span>
 
-<br />
+          <h2>Turn ideas into funded projects.</h2>
 
-<select
-  id="organization_type"
-  name="organization_type"
-  value={formData.organization_type}
-  onChange={handleChange}
-  required
->
-  <option value="">Select organization type</option>
-  <option value="nonprofit">Nonprofit</option>
-  <option value="community">Community Organization</option>
-  <option value="student">Student Organization</option>
-  <option value="education">Education Program</option>
-  <option value="youth">Youth Program</option>
-  <option value="other">Other</option>
-</select>
+          <p>
+            Create organization profiles, prepare guided grant applications,
+            save drafts, and manage the grant process from one organized
+            workspace.
+          </p>
+        </section>
 
-        <br /><br />
+        <section className="card">
+          <div className="card-heading">
+            <div>
+              <h2>Create Client Profile</h2>
+              <div className="gold-line"></div>
 
-        <textarea
-          name="mission"
-          placeholder="Mission"
-          value={formData.mission}
-          onChange={handleChange}
-          required
-        />
+              <p>
+                Add your organization information before beginning a grant
+                application.
+              </p>
+            </div>
+          </div>
 
-        <br /><br />
+          <form onSubmit={handleSubmit}>
+            <div className="form-grid">
+              <div className="form-group">
+                <label>Organization Name</label>
 
-        <textarea
-          name="target_population"
-          placeholder="Target Population"
-          value={formData.target_population}
-          onChange={handleChange}
-          required
-        />
+                <input
+                  type="text"
+                  name="organization_name"
+                  placeholder="Example: Detroit Youth Foundation"
+                  value={formData.organization_name}
+                  onChange={handleChange}
+                  required
+                />
+              </div>
 
-        <br /><br />
+              <div className="form-group">
+                <label>Organization Type</label>
 
-        <input
-          type="text"
-          name="contact_name"
-          placeholder="Contact Name"
-          value={formData.contact_name}
-          onChange={handleChange}
-          required
-        />
+                <select
+                  name="organization_type"
+                  value={formData.organization_type}
+                  onChange={handleChange}
+                  required
+                >
+                  <option value="">Select organization type</option>
 
-        <br /><br />
+                  <option value="nonprofit">Nonprofit</option>
 
-        <input
-          type="email"
-          name="contact_email"
-          placeholder="Contact Email"
-          value={formData.contact_email}
-          onChange={handleChange}
-          required
-        />
+                  <option value="community">Community Organization</option>
 
-        <br /><br />
+                  <option value="student">Student Organization</option>
 
-        <button type="submit">Create Client</button>
-      </form>
+                  <option value="education">Education Program</option>
 
-      <p>{message}</p>
-      <GrantTemplate
-  organizationType={formData.organization_type}
-  clientId={1}
-/>
+                  <option value="youth">Youth Program</option>
+
+                  <option value="other">Other</option>
+                </select>
+              </div>
+
+              <div className="form-group full-width">
+                <label>Organization Mission</label>
+
+                <textarea
+                  name="mission"
+                  placeholder="Describe the organization's mission..."
+                  value={formData.mission}
+                  onChange={handleChange}
+                  rows="4"
+                  required
+                />
+              </div>
+
+              <div className="form-group full-width">
+                <label>Target Population</label>
+
+                <textarea
+                  name="target_population"
+                  placeholder="Who does your organization serve?"
+                  value={formData.target_population}
+                  onChange={handleChange}
+                  rows="3"
+                  required
+                />
+              </div>
+
+              <div className="form-group">
+                <label>Contact Name</label>
+
+                <input
+                  type="text"
+                  name="contact_name"
+                  placeholder="Full name"
+                  value={formData.contact_name}
+                  onChange={handleChange}
+                  required
+                />
+              </div>
+
+              <div className="form-group">
+                <label>Contact Email</label>
+
+                <input
+                  type="email"
+                  name="contact_email"
+                  placeholder="name@example.com"
+                  value={formData.contact_email}
+                  onChange={handleChange}
+                  required
+                />
+              </div>
+            </div>
+
+            <div className="button-row">
+              <button type="submit" className="primary-btn">
+                Create Client Profile
+              </button>
+            </div>
+          </form>
+
+          {message && (
+            <div
+              className={
+                message.includes("successfully")
+                  ? "success-message"
+                  : "error-message"
+              }
+            >
+              {message}
+            </div>
+          )}
+        </section>
+
+        {clientId ? (
+          <GrantTemplate
+            organizationType={formData.organization_type || "nonprofit"}
+            clientId={clientId}
+          />
+        ) : (
+          <section className="card">
+            <div className="card-heading">
+              <div>
+                <h2>Guided Grant Application</h2>
+                <div className="gold-line"></div>
+
+                <p>
+                  Create a client profile first to begin a guided grant
+                  application.
+                </p>
+              </div>
+            </div>
+          </section>
+        )}
+      </main>
     </div>
   );
 }
