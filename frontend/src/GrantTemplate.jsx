@@ -24,6 +24,14 @@ const organizationNames = {
   other: "Other",
 };
 
+const grantStatuses = [
+  { value: "researching", label: "Researching" },
+  { value: "in_progress", label: "In Progress" },
+  { value: "submitted", label: "Submitted" },
+  { value: "awarded", label: "Awarded" },
+  { value: "declined", label: "Declined" },
+];
+
 function GrantTemplate({ organizationType = "nonprofit", clientId = 1 }) {
   const [step, setStep] = useState(1);
   const [error, setError] = useState("");
@@ -31,9 +39,27 @@ function GrantTemplate({ organizationType = "nonprofit", clientId = 1 }) {
 
   const [savedDrafts, setSavedDrafts] = useState([]);
   const [editingId, setEditingId] = useState(null);
+  const [deadlineWindow] = useState(() => {
+    const today = new Date();
+    const weekAhead = new Date(today);
+    weekAhead.setDate(today.getDate() + 7);
+    const toDateInputValue = (date) =>
+      [
+        date.getFullYear(),
+        String(date.getMonth() + 1).padStart(2, "0"),
+        String(date.getDate()).padStart(2, "0"),
+      ].join("-");
+
+    return {
+      today: toDateInputValue(today),
+      weekAhead: toDateInputValue(weekAhead),
+    };
+  });
 
   const [grantData, setGrantData] = useState({
     grant_title: "",
+    deadline: "",
+    status: "researching",
     problem_statement: "",
     goals: "",
     target_population: "",
@@ -150,6 +176,7 @@ function GrantTemplate({ organizationType = "nonprofit", clientId = 1 }) {
 
         body: JSON.stringify({
           ...grantData,
+          deadline: grantData.deadline || null,
           client: clientId,
         }),
       });
@@ -185,6 +212,8 @@ function GrantTemplate({ organizationType = "nonprofit", clientId = 1 }) {
 
     setGrantData({
       grant_title: draft.grant_title || "",
+      deadline: draft.deadline || "",
+      status: draft.status || "researching",
       problem_statement: draft.problem_statement || "",
       goals: draft.goals || "",
       target_population: draft.target_population || "",
@@ -211,6 +240,8 @@ function GrantTemplate({ organizationType = "nonprofit", clientId = 1 }) {
 
     setGrantData({
       grant_title: "",
+      deadline: "",
+      status: "researching",
       problem_statement: "",
       goals: "",
       target_population: "",
@@ -219,6 +250,65 @@ function GrantTemplate({ organizationType = "nonprofit", clientId = 1 }) {
       evaluation_plan: "",
     });
   };
+
+  const handleStatusChange = async (draft, status) => {
+    setError("");
+    setStatusMessage("");
+
+    try {
+      const response = await fetch(
+        `http://127.0.0.1:8000/api/grants/${draft.id}/`,
+        {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ status }),
+        },
+      );
+
+      if (!response.ok) {
+        setError(`Could not update the status for "${draft.grant_title}".`);
+        return;
+      }
+
+      setStatusMessage(`Status updated for "${draft.grant_title}".`);
+      await loadDrafts();
+    } catch (err) {
+      console.error(err);
+      setError("Could not connect to the backend.");
+    }
+  };
+
+  const getDeadlineLabel = (deadline) => {
+    if (!deadline) {
+      return "No deadline set";
+    }
+
+    return new Date(`${deadline}T00:00:00`).toLocaleDateString(undefined, {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+    });
+  };
+
+  const getDeadlineState = (deadline, status) => {
+    if (!deadline) {
+      return "";
+    }
+
+    const isClosed =
+      status === "submitted" || status === "awarded" || status === "declined";
+
+    if (deadline < deadlineWindow.today && !isClosed) {
+      return "overdue";
+    }
+
+    return deadline <= deadlineWindow.weekAhead && !isClosed ? "due-soon" : "";
+  };
+
+  const getStatusLabel = (status) =>
+    grantStatuses.find((option) => option.value === status)?.label || status;
 
   const guidance =
     organizationGuidance[organizationType] || organizationGuidance.other;
@@ -267,6 +357,35 @@ function GrantTemplate({ organizationType = "nonprofit", clientId = 1 }) {
               value={grantData.grant_title}
               onChange={handleChange}
             />
+          </div>
+
+          <div className="form-grid tracking-fields">
+            <div className="form-group">
+              <label htmlFor="deadline">Application Deadline</label>
+              <input
+                id="deadline"
+                type="date"
+                name="deadline"
+                value={grantData.deadline}
+                onChange={handleChange}
+              />
+            </div>
+
+            <div className="form-group">
+              <label htmlFor="status">Application Status</label>
+              <select
+                id="status"
+                name="status"
+                value={grantData.status}
+                onChange={handleChange}
+              >
+                {grantStatuses.map((option) => (
+                  <option key={option.value} value={option.value}>
+                    {option.label}
+                  </option>
+                ))}
+              </select>
+            </div>
           </div>
         </div>
       )}
@@ -377,6 +496,16 @@ function GrantTemplate({ organizationType = "nonprofit", clientId = 1 }) {
             </div>
 
             <div className="review-item">
+              <strong>Application Deadline</strong>
+              {getDeadlineLabel(grantData.deadline)}
+            </div>
+
+            <div className="review-item">
+              <strong>Application Status</strong>
+              {getStatusLabel(grantData.status)}
+            </div>
+
+            <div className="review-item">
               <strong>Problem Statement</strong>
               {grantData.problem_statement}
             </div>
@@ -459,6 +588,40 @@ function GrantTemplate({ organizationType = "nonprofit", clientId = 1 }) {
               <h3>{draft.grant_title}</h3>
 
               <p className="draft-id">Draft #{draft.id}</p>
+
+              <p
+                className={`draft-deadline ${getDeadlineState(
+                  draft.deadline,
+                  draft.status,
+                )}`}
+              >
+                <strong>Deadline:</strong> {getDeadlineLabel(draft.deadline)}
+                {getDeadlineState(draft.deadline, draft.status) ===
+                  "overdue" && (
+                    <span className="deadline-alert"> Overdue</span>
+                  )}
+                {getDeadlineState(draft.deadline, draft.status) ===
+                  "due-soon" && (
+                  <span className="deadline-alert"> Due soon</span>
+                )}
+              </p>
+
+              <div className="draft-status">
+                <label htmlFor={`draft-status-${draft.id}`}>Status</label>
+                <select
+                  id={`draft-status-${draft.id}`}
+                  value={draft.status}
+                  onChange={(event) =>
+                    handleStatusChange(draft, event.target.value)
+                  }
+                >
+                  {grantStatuses.map((option) => (
+                    <option key={option.value} value={option.value}>
+                      {option.label}
+                    </option>
+                  ))}
+                </select>
+              </div>
 
               <button
                 type="button"

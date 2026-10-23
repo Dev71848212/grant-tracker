@@ -430,6 +430,39 @@ textarea:focus {
   font-size: 13px;
 }
 
+.tracking-fields {
+  margin-top: 20px;
+}
+
+.draft-deadline {
+  margin: 14px 0;
+  color: #666;
+  font-size: 14px;
+}
+
+.draft-deadline.overdue,
+.deadline-alert {
+  color: #a52a2a;
+  font-weight: 700;
+}
+
+.draft-deadline.due-soon,
+.draft-deadline.due-soon .deadline-alert {
+  color: #967510;
+}
+
+.draft-status {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 16px;
+}
+
+.draft-status label {
+  font-size: 13px;
+  font-weight: 600;
+}
+
 .editing-banner {
   background: #fff6d2;
   border: 1px solid #e5ca64;

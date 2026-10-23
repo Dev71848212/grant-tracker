@@ -27,6 +27,14 @@ class ClientProfile(models.Model):
         return self.organization_name
 
 class GrantDraft(models.Model):
+    STATUS_CHOICES = [
+        ('researching', 'Researching'),
+        ('in_progress', 'In Progress'),
+        ('submitted', 'Submitted'),
+        ('awarded', 'Awarded'),
+        ('declined', 'Declined'),
+    ]
+
     client = models.ForeignKey(
         ClientProfile,
         on_delete=models.CASCADE,
@@ -34,6 +42,12 @@ class GrantDraft(models.Model):
     )
 
     grant_title = models.CharField(max_length=200)
+    deadline = models.DateField(null=True, blank=True)
+    status = models.CharField(
+        max_length=20,
+        choices=STATUS_CHOICES,
+        default='researching'
+    )
     problem_statement = models.TextField()
     goals = models.TextField()
     target_population = models.TextField()
