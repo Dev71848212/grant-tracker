@@ -65,7 +65,35 @@ The Grant Tracker centralizes these activities into one application.
 
 ---
 
-## 4. Core Product Features
+## 4. Project Declaration
+
+### Feasibility
+
+The Nonprofit Grant & Funding Tracker is feasible within the project schedule and available team resources. The application uses technologies familiar to the development team, including React, Vite, Django, Django REST Framework, SQLite, GitHub, and Jira.
+
+The system is being developed incrementally through Scrum sprints so that core functionality can be implemented and tested in manageable stages.
+
+### Added Value
+
+The Grant Tracker provides value by centralizing activities that nonprofit organizations may otherwise manage across spreadsheets, documents, email, calendars, and other separate tools.
+
+The application helps organizations reduce administrative work, organize grant applications, monitor deadlines, track application status, and manage reporting requirements from one system.
+
+### Monetization
+
+A future production version of the Grant Tracker could use a subscription-based software-as-a-service model. Small nonprofit organizations could receive basic grant tracking functionality, while larger organizations could subscribe to additional features such as expanded reporting, multiple users, additional storage, and advanced grant management tools.
+
+The current CSC 4110 version is an academic prototype and does not process payments.
+
+### Security
+
+The system should protect nonprofit and grant-related information from unauthorized access or modification. Security considerations include input validation, controlled API access, secure handling of stored information, and protection of application data.
+
+A future production deployment should add user authentication, authorization, HTTPS, secure production database configuration, environment-based secret management, regular backups, and additional security testing.
+
+---
+
+## 5. Core Product Features
 
 ### Grant Application Management
 
@@ -103,7 +131,7 @@ Users can:
 
 ---
 
-## 5. Customer Risks Addressed
+## 6. Customer Risks Addressed
 
 ### Missing Application Deadlines
 
@@ -137,7 +165,7 @@ Users can:
 
 ---
 
-## 6. Technical Architecture
+## 7. Technical Architecture
 
 The Grant Tracker uses a client-server architecture.
 
@@ -170,7 +198,7 @@ The React frontend communicates with the Django backend through REST API request
 
 ---
 
-## 7. Development Methodology
+## 8. Development Methodology
 
 Team 3 uses Scrum to organize development.
 
@@ -192,7 +220,7 @@ The workflow is:
 
 ---
 
-## 8. User Guide
+## 9. User Guide
 
 ### Creating a Client Profile
 
@@ -239,7 +267,7 @@ Users can create reporting requirements, assign due dates, monitor incomplete re
 
 ---
 
-## 9. Licensing and Use
+## 10. Licensing and Use
 
 The Grant Tracker is an academic software project developed by Team 3 for CSC 4110 Software Engineering at Wayne State University.
 
@@ -247,7 +275,7 @@ The application is intended for educational and demonstration purposes.
 
 ---
 
-## 10. Disclaimer and Indemnification
+## 11. Disclaimer and Indemnification
 
 The Grant Tracker is a project-management and organizational tool. It does not guarantee grant eligibility, approval, funding, or regulatory compliance.
 
