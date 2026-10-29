@@ -59,6 +59,9 @@ function App() {
 
   return (
     <div className="app-shell">
+      {/* =========================
+          TOP NAVIGATION
+      ========================== */}
       <header className="topbar">
         <div className="brand">
           <div className="logo-box">G</div>
@@ -73,6 +76,9 @@ function App() {
       </header>
 
       <main className="page-container">
+        {/* =========================
+            HERO
+        ========================== */}
         <section className="hero">
           <span className="hero-label">Nonprofit Funding Platform</span>
 
@@ -85,6 +91,9 @@ function App() {
           </p>
         </section>
 
+        {/* =========================
+            CLIENT PROFILE
+        ========================== */}
         <section className="card">
           <div className="card-heading">
             <div>
@@ -101,9 +110,10 @@ function App() {
           <form onSubmit={handleSubmit}>
             <div className="form-grid">
               <div className="form-group">
-                <label>Organization Name</label>
+                <label htmlFor="organization_name">Organization Name</label>
 
                 <input
+                  id="organization_name"
                   type="text"
                   name="organization_name"
                   placeholder="Example: Detroit Youth Foundation"
@@ -114,34 +124,30 @@ function App() {
               </div>
 
               <div className="form-group">
-                <label>Organization Type</label>
+                <label htmlFor="organization_type">Organization Type</label>
 
                 <select
+                  id="organization_type"
                   name="organization_type"
                   value={formData.organization_type}
                   onChange={handleChange}
                   required
                 >
                   <option value="">Select organization type</option>
-
                   <option value="nonprofit">Nonprofit</option>
-
                   <option value="community">Community Organization</option>
-
                   <option value="student">Student Organization</option>
-
                   <option value="education">Education Program</option>
-
                   <option value="youth">Youth Program</option>
-
                   <option value="other">Other</option>
                 </select>
               </div>
 
               <div className="form-group full-width">
-                <label>Organization Mission</label>
+                <label htmlFor="mission">Organization Mission</label>
 
                 <textarea
+                  id="mission"
                   name="mission"
                   placeholder="Describe the organization's mission..."
                   value={formData.mission}
@@ -152,9 +158,10 @@ function App() {
               </div>
 
               <div className="form-group full-width">
-                <label>Target Population</label>
+                <label htmlFor="target_population">Target Population</label>
 
                 <textarea
+                  id="target_population"
                   name="target_population"
                   placeholder="Who does your organization serve?"
                   value={formData.target_population}
@@ -165,9 +172,10 @@ function App() {
               </div>
 
               <div className="form-group">
-                <label>Contact Name</label>
+                <label htmlFor="contact_name">Contact Name</label>
 
                 <input
+                  id="contact_name"
                   type="text"
                   name="contact_name"
                   placeholder="Full name"
@@ -178,9 +186,10 @@ function App() {
               </div>
 
               <div className="form-group">
-                <label>Contact Email</label>
+                <label htmlFor="contact_email">Contact Email</label>
 
                 <input
+                  id="contact_email"
                   type="email"
                   name="contact_email"
                   placeholder="name@example.com"
@@ -211,6 +220,9 @@ function App() {
           )}
         </section>
 
+        {/* =========================
+            GRANT APPLICATION
+        ========================== */}
         {clientId ? (
           <GrantTemplate
             organizationType={formData.organization_type || "nonprofit"}
@@ -231,6 +243,123 @@ function App() {
             </div>
           </section>
         )}
+
+        {/* =========================
+            FORESTVIEW PROJECT RESOURCES
+        ========================== */}
+        <section className="project-resources">
+          <div className="resources-heading">
+            <span className="hero-label">Forestview Project</span>
+
+            <h2>Project Resources</h2>
+
+            <p>
+              Documentation, design artifacts, testing evidence, and development
+              tools used by Team 3 to plan, build, and evaluate the Nonprofit
+              Grant & Funding Tracker.
+            </p>
+          </div>
+
+          <div className="resource-grid">
+            {/* PROJECT ARTIFACTS */}
+            <div className="resource-card">
+              <div className="resource-number">01</div>
+
+              <h3>Project Artifacts</h3>
+
+              <p>
+                Access the documentation and design artifacts supporting the
+                Grant Tracker project.
+              </p>
+
+              <div className="resource-links">
+                <a
+                  href="https://github.com/Dev71848212/grant-tracker/blob/main/docs/project-documentation.md"
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  Project Documentation
+                  <span>→</span>
+                </a>
+
+                <a
+                  href="https://github.com/Dev71848212/grant-tracker/tree/main/docs/diagrams"
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  System Diagrams
+                  <span>→</span>
+                </a>
+
+                <a
+                  href="https://github.com/Dev71848212/grant-tracker/blob/main/docs/metrics-testing.md"
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  Metrics &amp; Testing
+                  <span>→</span>
+                </a>
+              </div>
+            </div>
+
+            {/* PROJECT TOOLING */}
+            <div className="resource-card">
+              <div className="resource-number">02</div>
+
+              <h3>Project Tooling</h3>
+
+              <p>
+                Access the source-code repository and Agile project-management
+                environment used by Team 3.
+              </p>
+
+              <div className="resource-links">
+                <a
+                  href="https://github.com/Dev71848212/grant-tracker"
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  GitHub Repository
+                  <span>→</span>
+                </a>
+
+                <a
+                  href="https://wayne-team-mvl0lxdl.atlassian.net/jira/software/projects/TC/boards/4/backlog?epics=visible"
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  Jira Project
+                  <span>→</span>
+                </a>
+              </div>
+            </div>
+          </div>
+
+          {/* PRODUCT INFORMATION */}
+          <div className="project-summary">
+            <div>
+              <span className="summary-label">Product</span>
+              <strong>Nonprofit Grant &amp; Funding Tracker</strong>
+            </div>
+
+            <div>
+              <span className="summary-label">Course</span>
+              <strong>CSC 4110 Software Engineering</strong>
+            </div>
+
+            <div>
+              <span className="summary-label">Team</span>
+              <strong>Team 3</strong>
+            </div>
+          </div>
+
+          {/* TEAM */}
+          <div className="team-credit">
+            <strong>Team 3</strong>
+
+            <span>Haitham Muhsin • Muhammad Bazzi • Samuel Womack</span>
+          </div>
+        </section>
       </main>
     </div>
   );
