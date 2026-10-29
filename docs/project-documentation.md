@@ -8,6 +8,29 @@
 
 ---
 
+## Document Control
+
+**Document Title:** Nonprofit Grant & Funding Tracker Project Documentation  
+**Project:** Forestview Enterprise Application Project  
+**Course:** CSC 4110 Software Engineering  
+**Document Owner:** Team 3  
+**Current Version:** 1.1  
+**Repository:** grant-tracker  
+**Controlled Location:** GitHub `/docs/project-documentation.md`
+
+### Revision History
+
+| Version | Date | Description | Owner |
+|---|---|---|---|
+| 1.0 | October 2026 | Initial project documentation | Team 3 |
+| 1.1 | October 28, 2026 | Added document control, revision history, and updated Forestview project documentation | Team 3 |
+
+### Document Management
+
+This document is maintained in the team's GitHub repository. Changes are version-controlled through Git commits. Jira is used as the system of record for project requirements, user stories, testing, sprint activities, and related project work.
+
+---
+
 ## 1. Product Vision
 
 The Nonprofit Grant & Funding Tracker is designed to help small nonprofit and community organizations organize the grant funding process in one centralized application.
