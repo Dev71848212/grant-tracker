@@ -694,3 +694,13 @@ textarea:focus {
     grid-template-columns: 1fr;
   }
 }
+
+.tooling-link {
+  text-decoration: none;
+  display: inline-block;
+}
+
+.tooling-link:hover {
+  background: #fff3bd;
+  color: #6f5708;
+}
